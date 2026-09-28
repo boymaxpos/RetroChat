@@ -1,0 +1,3 @@
+# A dedicated file-backed cache avoids depending on a GUI keychain session.
+# Treat /Users/retrochat/.codex/auth.json like a password.
+cli_auth_credentials_store = "file"

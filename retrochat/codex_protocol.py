@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
 import shutil
+from pathlib import Path
 from typing import Any
 
 from .backend import BackendError
@@ -13,9 +15,37 @@ from .backend import BackendError
 CLIENT_NAME = "retrochat"
 CLIENT_VERSION = "0.2.0-phase2"
 
+CODEX_ENV_VAR = "RETROCHAT_CODEX"
+CODEX_FALLBACKS = (
+    Path("/Applications/ChatGPT.app/Contents/Resources/codex-cli/bin/codex"),
+    Path("/Applications/ChatGPT.app/Contents/Resources/codex"),
+    Path("/Applications/Codex.app/Contents/Resources/codex"),
+)
+
 
 class CodexProtocolError(BackendError):
     """A failure starting or communicating with Codex App Server."""
+
+
+def find_codex_executable() -> str | None:
+    """Find Codex even when a non-interactive SSH shell has a minimal PATH."""
+
+    configured = os.environ.get(CODEX_ENV_VAR)
+    if configured:
+        candidate = Path(configured).expanduser()
+        if candidate.is_file() and os.access(candidate, os.X_OK):
+            return str(candidate.resolve())
+        return None
+
+    on_path = shutil.which("codex")
+    if on_path:
+        return on_path
+
+    fallback_candidates = (Path.home() / ".local/bin/codex", *CODEX_FALLBACKS)
+    for candidate in fallback_candidates:
+        if candidate.is_file() and os.access(candidate, os.X_OK):
+            return str(candidate.resolve())
+    return None
 
 
 class AppServerClient:
@@ -35,9 +65,11 @@ class AppServerClient:
         if self.process is not None:
             return
 
-        codex = shutil.which("codex")
+        codex = find_codex_executable()
         if codex is None:
-            raise CodexProtocolError("Codex is not installed or is not on PATH.")
+            raise CodexProtocolError(
+                "Codex was not found. Set RETROCHAT_CODEX to its executable path."
+            )
 
         try:
             self.process = await asyncio.create_subprocess_exec(

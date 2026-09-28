@@ -1,0 +1,23 @@
+#!/bin/sh
+set -eu
+
+readonly HOME_DIR="/Users/retrochat"
+readonly RUNTIME_DIR="/usr/local/libexec/retrochat"
+readonly STATE_DIR="${HOME_DIR}/.retrochat"
+
+cd "${HOME_DIR}"
+umask 077
+
+exec /usr/bin/env -i \
+    HOME="${HOME_DIR}" \
+    USER="retrochat" \
+    LOGNAME="retrochat" \
+    SHELL="/bin/sh" \
+    PATH="/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin" \
+    LANG="en_US.UTF-8" \
+    LC_ALL="en_US.UTF-8" \
+    TERM="vt100" \
+    TMPDIR="${STATE_DIR}/tmp" \
+    RETROCHAT_CODEX="${RUNTIME_DIR}/codex" \
+    /opt/homebrew/bin/python3 -I -c \
+    "import sys; sys.path.insert(0, '${RUNTIME_DIR}'); from retrochat.app import main; raise SystemExit(main())"
