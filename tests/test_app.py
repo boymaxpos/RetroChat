@@ -57,7 +57,7 @@ class RetroChatAppTests(unittest.IsolatedAsyncioTestCase):
 
         self.assertEqual(await app.run(), 0)
         text = output.getvalue()
-        self.assertIn("/help - Show commands", text)
+        self.assertIn("/help     Show this command list", text)
         self.assertIn("[New conversation]", text)
         self.assertIn("Goodbye.", text)
         self.assertEqual(backend.reset, 1)

@@ -13,23 +13,7 @@ from .backend import BackendError, ChatBackend
 from .codex_backend import CodexBackend
 from .commands import Command, parse_command
 from .terminal import TerminalAdapter
-
-
-BANNER = """\
-RETROCHAT 0.1
-Mac Gateway Connected
-----------------------------
-
-/help  Commands
-/new   New conversation
-/exit  Exit
-"""
-
-HELP_TEXT = """\
-/help - Show commands
-/new  - New conversation
-/exit - Exit RetroChat
-"""
+from .ui import BANNER, HELP_TEXT
 
 _INTERRUPTED = object()
 

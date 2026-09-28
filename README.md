@@ -3,10 +3,11 @@
 RetroChat will provide a plain-text ChatGPT conversation terminal for a
 Windows 98 computer connected to a Mac mini over SSH.
 
-This repository has completed Phase 7. It provides a plain-text interactive
-CLI with streamed replies, conversation context, `/help`, `/new`, and `/exit`.
-All output passes through a terminal adapter that replaces incompatible Unicode
-symbols and removes terminal control sequences while preserving Chinese text.
+This repository has completed physical English/ASCII validation on Windows 98.
+It provides a plain-text interactive CLI with streamed replies, conversation
+context, `/help`, `/new`, and `/exit`. All output passes through a terminal
+adapter that replaces incompatible Unicode symbols and removes terminal control
+sequences. Localization is outside the current project scope.
 The deployed service uses an independent Codex ChatGPT login owned by the
 restricted `retrochat` account and does not use an API key.
 
@@ -68,9 +69,14 @@ python3 -m unittest discover -s tests -v
 
 The Phase 4 adapter converts common bullets, arrows, status marks, smart quotes,
 dashes, emoji, and box-drawing characters to ASCII-safe equivalents. It also
-normalizes line endings and removes ANSI and unsafe control characters. It does
-not yet perform UTF-8/CP936 byte encoding; that remains part of the later
-Chinese terminal phase.
+normalizes line endings and removes ANSI and unsafe control characters.
+
+## Phase 10 Windows 98 interface
+
+Phase 10 adds a 72-column `RetroChat` ASCII logo, a visible Mac gateway status,
+and a framed help screen designed from the physical PuTTY 0.77 display. The UI
+uses only printable 7-bit ASCII and does not depend on ANSI color, cursor
+positioning, Unicode box drawing, terminal detection, or additional packages.
 
 ## Phase 5 local SSH validation
 
@@ -152,13 +158,14 @@ should still be exposed only to a trusted LAN while password login is enabled.
 - `retrochat/codex_backend.py` - conversation and streaming implementation
 - `retrochat/prompts.py` - terminal-oriented model instructions
 - `retrochat/terminal.py` - terminal-safe text normalization and output
+- `retrochat/ui.py` - fixed-width ASCII banner and help screen
 - `retrochat.py` - CLI entry point
 - `deploy/` - root-owned launcher, Codex config, and per-user SSH policy
 - `scripts/` - Phase 7 installation, verification, finalization, and cleanup
 - `docs/phase-7-security-design.md` - deployed security design and audit record
+- `docs/phase-10-win98-ui.md` - ASCII interface design and physical test steps
 
-## Not implemented yet
+## Remaining work
 
-- Configurable UTF-8/CP936 terminal encoding
-- Windows 98 testing
-- PuTTY public-key enrollment and optional public-key-only authentication
+- Deploy the Phase 10 UI to the root-owned runtime
+- Verify the banner and help screen on the physical Windows 98 PuTTY client
